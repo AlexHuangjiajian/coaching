@@ -124,4 +124,18 @@
   <select id="selectByUserName" parameterType="java.lang.String" resultType="User">
     select * from user where userName = #{username,jdbcType=VARCHAR}
   </select>
+
+  <select id="getAllUserList" parameterType="User" resultType="User">
+     select * from user where 1=1
+    <if test="username != null and username!=''" >
+      <bind name="pattern_username" value="'%' + _parameter.username + '%'" />
+     and userName like #{pattern_username}
+    </if>
+    <if test="password != null and password!=''" >
+      <bind name="pattern_password" value="'%' + _parameter.password + '%'" />
+      and password like #{pattern_password}
+    </if>
+  </select>
+
+
 </mapper>

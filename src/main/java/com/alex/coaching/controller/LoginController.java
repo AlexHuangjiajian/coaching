@@ -42,12 +42,9 @@ public class LoginController {
 
     @ResponseBody
     @RequestMapping("/getInfo")
-    public JSONObject getInfo(HttpServletRequest request, HttpServletResponse response) throws ParseException {
-        List<User> userList = new ArrayList<User>();
+    public JSONObject getInfo(User user) {
+        List<User> userList = userService.getAllUser(user);
         JSONObject jsonObject = new JSONObject();
-        String userName = request.getParameter("userName");
-        User user = userService.selectByUserName(userName);
-        userList.add(user);
         jsonObject.put("code",0);
         jsonObject.put("msg","");
         jsonObject.put("count",userList.size());

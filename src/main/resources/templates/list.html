@@ -4,24 +4,37 @@
     <meta charset="utf-8">
     <title>table模块快速使用</title>
     <link rel="stylesheet" href="../static/layui/css/layui.css" media="all">
+    <script type="application/javascript" src="../static/js/jquery-1.7.2.js"></script>
 </head>
 <body>
 <div class="layui-container">
 
         <form class="layui-form" action="" style="padding:30px 0px 30px 0px">
             <div class="layui-row layui-col-space30">
+
             <div class="layui-col-md4">
                 <label class="layui-form-label">材料名:</label>
                 <div class="layui-input-block">
-                <input type="text" name="userName" id="userName"
-                       required lay-verify="required"
+                    <!--lay-verify="required"-->
+                <input type="text" name="username"
+                       required
                        placeholder="请输入名称" autocomplete="off" class="layui-input">
                 </div>
             </div>
 
+                <div class="layui-col-md4">
+                    <label class="layui-form-label">密码:</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="password"
+                               required
+                               placeholder="请输入密码" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+
                 <div class="layui-col-md3" style="float: right">
                     <div class="layui-input-block">
-                        <button type="button" id="do_search" class="layui-btn layui-btn-radius layui-btn-primary">搜索</button>
+                        <button  class="layui-btn layui-btn-radius" lay-submit id="do_search" lay-filter="*">搜索</button>
+
                     </div>
                 </div>
     </div>
@@ -32,42 +45,54 @@
 
 <table id="demo" lay-filter="test"></table>
 
-
-
-
 <script src="../static/layui/layui.js"></script>
 <script>
+    //var table = layui.table;
     layui.use('table', function(){
-        var table = layui.table;
-
         //第一个实例
-        table.render({
+        layui.table.render({
             elem: '#demo'
             ,id:'test'
             ,height: 312
-            ,url: '/getInfo?userName=15625112802&page=1&limit=30' //数据接口
+            ,url: '/getInfo' //数据接口
             ,page: true //开启分页\
             ,cols: [
                 [ //表头
-                    {field: 'id', title: 'ID', width:80, sort: true, fixed: 'left'}
-                    ,{field: 'username', title: '用户名', width:80}
+                    {field: 'id', title: 'ID', width:80, sort: true, fixed: 'center'}
+                    ,{field: 'username', title: '用户名', width:150}
+                    ,{field: 'password', title: '密码', width:150}
+                    ,{field: 'createtime', title: '创建时间', width:150}
                 ]
             ]
         });
     });
     // 执行搜索，表格重载
-    $('#do_search').on('click', function () {
+  /*  $('#do_search').on('click', function () {
         // 搜索条件
         var send_name = $('#userName').val();
-        table.reload('test', {
+        alert(send_name);
+        layui.table.reload('test', {
             method: 'get'
-            , where: {
-                'userName': send_name,
-            }
+            ,where:{'userName':send_name}
             , page: {
                 curr: 1
             }
         });
+    });*/
+    layui.use('form', function(){
+    layui.form.on('submit(*)', function(data){
+        console.log(data.elem) //被执行事件的元素DOM对象，一般为button对象
+        console.log(data.form) //被执行提交的form对象，一般在存在form标签时才会返回
+        console.log(data.field) //当前容器的全部表单字段，名值对形式：{name: value}
+        layui.table.reload('test', {
+            method: 'get'
+            ,where:data.field
+            , page: {
+                curr: 1
+            }
+        });
+        return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+    })
     });
 
 </script>

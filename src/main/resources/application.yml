@@ -2,6 +2,8 @@ server:
   port: 8001
 mybatis:
   type-aliases-package: com.alex.coaching.model        # 所有Entity别名类所在包
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 debug: true
 spring:
   devtools:
