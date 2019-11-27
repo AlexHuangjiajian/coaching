@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>table模块快速使用</title>
+    <link rel="stylesheet" href="../static/layui/css/layui.css" media="all">
+</head>
+<body>
+<div class="layui-container">
+
+        <form class="layui-form" action="" style="padding:30px 0px 30px 0px">
+            <div class="layui-row layui-col-space30">
+            <div class="layui-col-md4">
+                <label class="layui-form-label">材料名:</label>
+                <div class="layui-input-block">
+                <input type="text" name="userName" id="userName"
+                       required lay-verify="required"
+                       placeholder="请输入名称" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+                <div class="layui-col-md3" style="float: right">
+                    <div class="layui-input-block">
+                        <button type="button" id="do_search" class="layui-btn layui-btn-radius layui-btn-primary">搜索</button>
+                    </div>
+                </div>
+    </div>
+        </form>
+
+
+</div>
+
+<table id="demo" lay-filter="test"></table>
+
+
+
+
+<script src="../static/layui/layui.js"></script>
+<script>
+    layui.use('table', function(){
+        var table = layui.table;
+
+        //第一个实例
+        table.render({
+            elem: '#demo'
+            ,id:'test'
+            ,height: 312
+            ,url: '/getInfo?userName=15625112802&page=1&limit=30' //数据接口
+            ,page: true //开启分页\
+            ,cols: [
+                [ //表头
+                    {field: 'id', title: 'ID', width:80, sort: true, fixed: 'left'}
+                    ,{field: 'username', title: '用户名', width:80}
+                ]
+            ]
+        });
+    });
+    // 执行搜索，表格重载
+    $('#do_search').on('click', function () {
+        // 搜索条件
+        var send_name = $('#userName').val();
+        table.reload('test', {
+            method: 'get'
+            , where: {
+                'userName': send_name,
+            }
+            , page: {
+                curr: 1
+            }
+        });
+    });
+
+</script>
+</body>
+</html>
