@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>材料统计</title>
+    <link rel="stylesheet" href="../../static/layui/css/layui.css" media="all">
+    <script type="application/javascript" src="../../static/js/jquery-1.7.2.js"></script>
+</head>
+<body>
+<div class="layui-container" style="margin-bottom: 50px">
+    <!--搜索栏-->
+    <form class="layui-form" action="" style="padding:30px 0px 30px 0px">
+        <div class="layui-row layui-col-space20">
+
+            <div class="layui-col-md4">
+                <label class="layui-form-label">材料名:</label>
+                <div class="layui-input-block">
+                    <!--lay-verify="required"-->
+                    <input type="text" name="name"
+                           required
+                           placeholder="请输入名称" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-col-md4">
+                <label class="layui-form-label">批号:</label>
+                <div class="layui-input-block">
+                    <input type="text" name="lotNumber"
+                           required
+                           placeholder="请输入批号" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-col-md4">
+                <label class="layui-form-label">出仓日期:</label>
+                <div class="layui-input-block">
+                        <input type="text" name="outDateMin" class="layui-input" id="outDateMin">
+                </div>
+                <span>——</span>
+                <div class="layui-input-block">
+                    <input type="text" name="outDateMax" class="layui-input" id="outDateMax">
+                </div>
+            </div>
+
+            <div class="layui-col-md3" style="float: right">
+                <div class="layui-input-block">
+                    <button  class="layui-btn" lay-submit id="do_search" lay-filter="*">搜索</button>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-col-md5" style="float:right;margin-top:20px;padding-left: 250px">
+            <!--功能按钮栏-->
+            <div class="layui-col-md3" style="text-align: right;">
+                <button  class="layui-btn layui-btn-normal"  id="add" lay-filter="add">新增出仓</button>
+            </div>
+            <div class="layui-col-md3" style="margin-left:20px">
+                <button  class="layui-btn layui-btn-normal"  id="input" lay-filter="input">导入表格</button>
+            </div>
+            <div class="layui-col-md3" style="margin-left:20px">
+                <button  class="layui-btn layui-btn-normal"  id="output" lay-filter="output">导出表格</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+<table id="demo" lay-filter="test"></table>
+
+<script src="../../static/layui/layui.js"></script>
+<script>
+    //初始化
+    layui.use('table',function(){
+        layui.table.render({
+            elem: '#demo'
+            ,id:'test'
+            ,height: 'full'
+            ,url: '/materialOut/list' //数据接口
+            ,page: true //开启分页
+            ,limits:[10,20,30]
+            ,cols: [
+                [ //表头
+                    {field:'id', title: 'ID', width:20, sort: true, fixed: 'center'}
+                    ,{field:'name', title: '名称', width:400}
+                    ,{field:'in_total', title: '总入仓量', width:400}
+                    ,{field:'out_total', title: '总出仓量', width:400}
+                    ,{field:'stock',title:'库存',width:400}
+                ]
+            ]
+        });
+    });
+
+    //重载
+    var reload = layui.use('form', function(){
+        layui.form.on('submit(*)', function(data){
+            console.log(data.elem) //被执行事件的元素DOM对象，一般为button对象
+            console.log(data.form) //被执行提交的form对象，一般在存在form标签时才会返回
+            console.log(data.field) //当前容器的全部表单字段，名值对形式：{name: value}
+            layui.table.reload('test', {
+                method: 'get'
+                ,where:data.field
+                , page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+            });
+            return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+        })
+    });
+
+    //日期初始化
+    layui.use('laydate', function(){
+        var laydate = layui.laydate;
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#outDate' //指定元素
+        });
+    });
+
+   //新增
+    $("#add").on('click',function(){
+        layui.use('layer', function(){
+            var layer = layui.layer;
+            layer.open({
+                type: 2
+                ,title:'新增材料'
+                ,area: ['1000px', '600px'],
+                content: '/materialOut/add' //这里content是一个URL，如果你不想让iframe出现滚动条，你还可以content: ['http://sentsin.com', 'no']
+            });
+        });
+    })
+</script>
+</body>
+</html>
