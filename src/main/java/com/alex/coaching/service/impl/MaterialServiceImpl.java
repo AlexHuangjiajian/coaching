@@ -50,6 +50,11 @@ public class MaterialServiceImpl implements MaterialService {
     }
 
     @Override
+    public List<String> getNameList() {
+        return materialMapper.getNameList();
+    }
+
+    @Override
     public List<Material> getAllMaterial(Material material, int page, int limit) {
         page=(page-1)*limit;
         return materialMapper.getAllMaterial(material,page,limit);

@@ -165,4 +165,8 @@
      and stock = #{stock,jdbcType=DOUBLE}
     </if>
   </select>
+
+  <select id="getNameList" resultType="java.lang.String">
+    select a.name from material a
+  </select>
 </mapper>

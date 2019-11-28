@@ -56,6 +56,7 @@ public class MaterialOutServiceImpl implements MaterialOutService {
 
     @Override
     public List<MaterialOut> getAllMaterialOut(MaterialOut materialOut,String outDateMin,String outDateMax, int page, int limit) {
+        page=(page-1)*limit;
         return materialOutMapper.getAllMaterialOut(outDateMin,outDateMax,page,limit,materialOut);
     }
 }

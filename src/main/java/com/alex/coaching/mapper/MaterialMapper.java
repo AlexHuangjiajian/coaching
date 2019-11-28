@@ -54,6 +54,8 @@ public interface MaterialMapper {
      */
     int updateByPrimaryKey(Material record);
 
+    List<String> getNameList();
+
     int  getAllMaterialCount(Material record);
 
     List<Material> getAllMaterial(@Param("material")Material material,@Param("offset")int page,@Param("pageSize")int limit);

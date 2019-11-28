@@ -46,5 +46,18 @@ public class MaterialController {
         return jsonObject;
     }
 
+    @ResponseBody
+    @RequestMapping("/getNameList")
+    public JSONObject getNameList(){
+        JSONObject jsonObject = new JSONObject();
+        List<String> materialList   = materialService.getNameList();
+        if(materialList.size()==0){
+            jsonObject.put("code",-1);
+        }else{
+            jsonObject.put("code",0);
+        }
+        jsonObject.put("list",materialList.toArray());
+        return jsonObject;
+    }
 
 }

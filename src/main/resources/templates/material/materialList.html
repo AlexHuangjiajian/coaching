@@ -7,12 +7,12 @@
     <script type="application/javascript" src="../../static/js/jquery-1.7.2.js"></script>
 </head>
 <body>
-<div class="layui-container" style="margin-bottom: 50px">
+<div class="layui-row" style="margin-bottom: 50px">
     <!--搜索栏-->
     <form class="layui-form" action="" style="padding:30px 0px 30px 0px">
         <div class="layui-row layui-col-space20">
 
-            <div class="layui-col-md4">
+            <div class="layui-col-md3">
                 <label class="layui-form-label">材料名:</label>
                 <div class="layui-input-block">
                     <!--lay-verify="required"-->
@@ -22,7 +22,7 @@
                 </div>
             </div>
 
-            <div class="layui-col-md4">
+            <div class="layui-col-md3">
                 <label class="layui-form-label">密码:</label>
                 <div class="layui-input-block">
                     <input type="text" name="password"
@@ -39,7 +39,7 @@
             </div>
         </div>
 
-        <div class="layui-col-md5" style="float:right;margin-top:20px;padding-left: 200px">
+        <div class="layui-row layui-md5" style="float:right;margin-top:20px;padding-left: 200px">
             <!--功能按钮栏-->
             <div class="layui-col-md3" style="text-align: right;">
                 <button  class="layui-btn layui-btn-normal"  id="add" lay-filter="add">新增材料</button>

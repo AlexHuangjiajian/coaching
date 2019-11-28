@@ -6,38 +6,58 @@
     <link rel="stylesheet" href="../../static/layui/css/layui.css" media="all">
     <script type="application/javascript" src="../../static/js/jquery-1.7.2.js"></script>
     <script src="../../static/layui/layui.js"></script>
+    <style>
+       .layui-input-block{
+           width: 250px;
+       }
+        .layui-form{
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
 <div class="layui-container">
-
-
 <form class="layui-form" action="">
+
     <div class="layui-form-item">
-        <label class="layui-form-label">输入框</label>
+        <label class="layui-form-label">材料选择:</label>
         <div class="layui-input-block">
-            <input type="text" name="title" required  lay-verify="required" placeholder="请输入标题" autocomplete="off" class="layui-input">
-        </div>
-    </div>
-    <div class="layui-form-item">
-        <label class="layui-form-label">密码框</label>
-        <div class="layui-input-inline">
-            <input type="password" name="password" required lay-verify="required" placeholder="请输入密码" autocomplete="off" class="layui-input">
-        </div>
-        <div class="layui-form-mid layui-word-aux">辅助文字</div>
-    </div>
-    <div class="layui-form-item">
-        <label class="layui-form-label">选择框</label>
-        <div class="layui-input-block">
-            <select name="city" lay-verify="required">
-                <option value=""></option>
-                <option value="0">北京</option>
-                <option value="1">上海</option>
-                <option value="2">广州</option>
-                <option value="3">深圳</option>
-                <option value="4">杭州</option>
+            <select name="mNameList" lay-verify="required" lay-search>
+                <option value="-1"></option>
             </select>
         </div>
     </div>
+
+    <div class="layui-form-item lot-num-select">
+    <label class="layui-form-label">批号:</label>
+        <!--<input type="text" name="title" placeholder="请输入批号" autocomplete="off" class="layui-input">-->
+        <div class="layui-input-block">
+        <select name="lotNumberList" lay-verify="required" lay-search>
+
+        </select>
+            <div>
+                <i class="layui-icon layui-icon-add-1" style="font-size: 30px;" id="addLotNumber"></i>
+            </div>
+        </div>
+</div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">出仓数量:</label>
+        <div class="layui-input-block">
+            <input type="text" name="num" required  lay-verify="required" placeholder="请输入数量"  class="layui-input">
+            <label class="layui-form-label">规格:</label>
+            <input type="text" name="specifications" value="kg"  class="layui-input" disabled="disabled">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">实际出仓量:</label>
+        <div class="layui-input-block">
+            <input type="text" name="outNum"  id="outNum" class="layui-input" disabled="disabled">
+        </div>
+    </div>
+
+
     <div class="layui-form-item">
         <label class="layui-form-label">复选框</label>
         <div class="layui-input-block">
@@ -74,10 +94,89 @@
 </form>
 </div>
 <script>
-    //Demo
+    //渲染材料下拉框
+    var getNameList = function(){
+        $.ajax({
+            type: "get",
+            url: "/material/getNameList",
+            contentType: 'application/x-www-form-urlencoded;charset=utf-8',
+            success: function(data){
+                 if(data.code==0){
+                     for(var i=0;i<data.list.length;i++){
+                         var str =  '<option value="'+i+'">'+data.list[i]+'</option>';
+                         console.log(str);
+                         $("select[name='mNameList']").append(str);
+                     }
+                     $("select[name='mNameList'] layui-select-title").val("");
+                 }
+            },
+            error:function(e){
+                console.log(e);
+            }
+        });
+    };
+
+    var getLogNumberList = function(){
+        var selectMaterial = $("select[name='mNameList'] option:selected").text();
+        if(selectMaterial!=undefined && selectMaterial!=null && selectMaterial!=''){
+            $.ajax({
+                type: "get",
+                url: "/materialIn/getLnList",
+                contentType: 'application/x-www-form-urlencoded;charset=utf-8',
+                success: function(data){
+                    if(data.code==0){
+                        for(var i=0;i<data.list.length;i++){
+                            var str =  '<option value="'+i+'" data-stock="'+data.list[i].stock+'">'+data.list[i].name+' 库存:'+data.list[i].stock+'/'
+                                +data.list[i].specifications+'</option>';
+                            $("select[name='lotNumberList']").append(str);
+                        }
+                    }
+                },
+                error:function(e){
+                    console.log(e);
+                }
+            });
+        }else{
+            layui.msg("请先选择材料!");
+        }
+    };
+
+    //添加多一个批号选择
+    var addLotNumber = function () {
+       var html =  $(".lot-num-select:last").clone();
+       //获取已选择批号,下一个下拉框不选择
+        var selectdLn = $(".lot-num-select:last lotNumberList option:selected").val();
+        alert(selectdLn);
+        $(".lot-num-select:last").after(html);
+        //删除已选择的批号
+        $(".lot-num-select:last lotNumberList option[value='"+selectdLn+"']").remove();
+    }
+
+    //计算实际出仓量( 还待编写)
+    /*var caluOutNum = function(){
+        $("#num").onchange(function () {
+            //获取输入数量
+            var num = $("#num").val();
+            //获取选择批号材料库存
+            var stock = $("#").val();
+            if(num>stock){
+               layui.msg("库存不足");
+            }else{
+            }
+        })
+        $("#outNum").val();
+    }*/
+
+    $(function () {
+        //渲染材料框
+        getNameList();
+    });
+
     layui.use('form', function(){
         var form = layui.form;
 
+        //渲染批号框
+        //getLogNumberList();
         //监听提交
         form.on('submit(formDemo)', function(data){
             layer.msg(JSON.stringify(data.field));

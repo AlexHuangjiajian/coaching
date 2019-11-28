@@ -54,6 +54,8 @@ public interface MaterialService {
      */
     int updateByPrimaryKey(Material record);
 
+    List<String> getNameList();
+
     List<Material> getAllMaterial(Material material,int page,int limit);
 
     int  getAllMaterialCount(Material record);
