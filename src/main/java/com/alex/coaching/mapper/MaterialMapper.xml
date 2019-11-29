@@ -166,7 +166,7 @@
     </if>
   </select>
 
-  <select id="getNameList" resultType="java.lang.String">
-    select a.name from material a
+  <select id="getNameList" resultType="java.util.Map">
+    select a.id,a.name from material a where a.stock>0
   </select>
 </mapper>

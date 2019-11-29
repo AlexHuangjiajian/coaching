@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author: linmeng
@@ -50,7 +51,7 @@ public class MaterialServiceImpl implements MaterialService {
     }
 
     @Override
-    public List<String> getNameList() {
+    public List<Map<String,Object>> getNameList() {
         return materialMapper.getNameList();
     }
 

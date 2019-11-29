@@ -47,7 +47,7 @@
             <property name="enableSubPackages" value="false" />
         </javaClientGenerator>
         <!-- 指定数据库表 -->
-        <table tableName="material_out" domainObjectName="MaterialOut"
+        <table tableName="material_in" domainObjectName="MaterialIn"
                       enableCountByExample="false" enableUpdateByExample="false"
                      enableDeleteByExample="false" enableSelectByExample="false"
                      selectByExampleQueryId="false">

@@ -22,7 +22,7 @@
     <div class="layui-form-item">
         <label class="layui-form-label">材料选择:</label>
         <div class="layui-input-block">
-            <select name="mNameList" lay-verify="required" lay-search>
+            <select name="mNameList" lay-verify="required"  lay-filter="mNameList" lay-search >
                 <option value="-1"></option>
             </select>
         </div>
@@ -32,8 +32,8 @@
     <label class="layui-form-label">批号:</label>
         <!--<input type="text" name="title" placeholder="请输入批号" autocomplete="off" class="layui-input">-->
         <div class="layui-input-block">
-        <select name="lotNumberList" lay-verify="required" lay-search>
-
+        <select name="lotNumberList" lay-verify="required">
+            <option value="-1"></option>
         </select>
             <div>
                 <i class="layui-icon layui-icon-add-1" style="font-size: 30px;" id="addLotNumber"></i>
@@ -99,16 +99,17 @@
         $.ajax({
             type: "get",
             url: "/material/getNameList",
+            async: false, // 同步
             contentType: 'application/x-www-form-urlencoded;charset=utf-8',
             success: function(data){
                  if(data.code==0){
                      for(var i=0;i<data.list.length;i++){
-                         var str =  '<option value="'+i+'">'+data.list[i]+'</option>';
-                         console.log(str);
+                         var str =  '<option value="'+data.list[i].id+'">'+data.list[i].name+'</option>';
                          $("select[name='mNameList']").append(str);
                      }
                      $("select[name='mNameList'] layui-select-title").val("");
                  }
+                layui.form.render("select");
             },
             error:function(e){
                 console.log(e);
@@ -116,28 +117,35 @@
         });
     };
 
-    var getLogNumberList = function(){
+    //渲染批号下拉框
+    var getLotNumberList = function(selectMaterialId){
         var selectMaterial = $("select[name='mNameList'] option:selected").text();
-        if(selectMaterial!=undefined && selectMaterial!=null && selectMaterial!=''){
+        console.log("材料名："+selectMaterial);
+        console.log("材料ID:"+selectMaterialId);
+        if(selectMaterial!=undefined && selectMaterial!=null && selectMaterial!='' && selectMaterialId!=-1){
             $.ajax({
                 type: "get",
                 url: "/materialIn/getLnList",
+                async: false, // 同步
+                data:{"materialId":selectMaterialId},
                 contentType: 'application/x-www-form-urlencoded;charset=utf-8',
                 success: function(data){
                     if(data.code==0){
                         for(var i=0;i<data.list.length;i++){
-                            var str =  '<option value="'+i+'" data-stock="'+data.list[i].stock+'">'+data.list[i].name+' 库存:'+data.list[i].stock+'/'
+                            var str =  '<option value="'+i+'"> 批号:'+data.list[i].lotNumber+'  库存:'+data.list[i].stock+'/'
                                 +data.list[i].specifications+'</option>';
+                            console.log(str);
                             $("select[name='lotNumberList']").append(str);
                         }
                     }
+                    layui.form.render("select");
                 },
                 error:function(e){
                     console.log(e);
                 }
             });
         }else{
-            layui.msg("请先选择材料!");
+            alertMsg("请先选择材料!");
         }
     };
 
@@ -172,11 +180,24 @@
         getNameList();
     });
 
+    var alertMsg = function(msg){
+        layui.use(['layer'], function(){
+            var layer = layui.layer;
+            layer.msg(msg);
+        })
+    }
+
     layui.use('form', function(){
         var form = layui.form;
 
-        //渲染批号框
-        //getLogNumberList();
+        form.on('select(mNameList)', function(data){
+            console.log(data.elem); //得到select原始DOM对象
+            console.log(data.value); //得到被选中的值
+            console.log(data.othis); //得到美化后的DOM对象
+            //渲染批号框
+            getLotNumberList(data.value);
+        });
+
         //监听提交
         form.on('submit(formDemo)', function(data){
             layer.msg(JSON.stringify(data.field));

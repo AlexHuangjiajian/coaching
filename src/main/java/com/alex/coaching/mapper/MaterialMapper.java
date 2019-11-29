@@ -4,6 +4,7 @@ import com.alex.coaching.model.Material;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 public interface MaterialMapper {
     /**
@@ -54,7 +55,7 @@ public interface MaterialMapper {
      */
     int updateByPrimaryKey(Material record);
 
-    List<String> getNameList();
+    List<Map<String,Object>> getNameList();
 
     int  getAllMaterialCount(Material record);
 

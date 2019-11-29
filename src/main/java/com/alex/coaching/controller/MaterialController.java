@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author: linmeng
@@ -50,13 +51,13 @@ public class MaterialController {
     @RequestMapping("/getNameList")
     public JSONObject getNameList(){
         JSONObject jsonObject = new JSONObject();
-        List<String> materialList   = materialService.getNameList();
+        List<Map<String,Object>> materialList   = materialService.getNameList();
         if(materialList.size()==0){
             jsonObject.put("code",-1);
         }else{
             jsonObject.put("code",0);
         }
-        jsonObject.put("list",materialList.toArray());
+        jsonObject.put("list",materialList);
         return jsonObject;
     }
 
