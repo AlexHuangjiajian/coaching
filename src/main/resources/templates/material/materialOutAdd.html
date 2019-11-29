@@ -32,11 +32,11 @@
     <label class="layui-form-label">批号:</label>
         <!--<input type="text" name="title" placeholder="请输入批号" autocomplete="off" class="layui-input">-->
         <div class="layui-input-block">
-        <select name="lotNumberList" lay-verify="required">
+        <select name="lotNumberList" lay-verify="required" lay-search>
             <option value="-1"></option>
         </select>
             <div>
-                <i class="layui-icon layui-icon-add-1" style="font-size: 30px;" id="addLotNumber"></i>
+                <span id="addLotNumber"><i class="layui-icon layui-icon-add-1" style="font-size: 30px;"></i></span>
             </div>
         </div>
 </div>
@@ -96,6 +96,8 @@
 <script>
     //渲染材料下拉框
     var getNameList = function(){
+        layui.use('form',function(){
+            var form  = layui.form;
         $.ajax({
             type: "get",
             url: "/material/getNameList",
@@ -109,20 +111,24 @@
                      }
                      $("select[name='mNameList'] layui-select-title").val("");
                  }
-                layui.form.render("select");
+                form.render("select");
             },
             error:function(e){
                 console.log(e);
             }
         });
+        });
     };
 
     //渲染批号下拉框
     var getLotNumberList = function(selectMaterialId){
+        layui.use('form',function(){
+            var form  = layui.form;
         var selectMaterial = $("select[name='mNameList'] option:selected").text();
         console.log("材料名："+selectMaterial);
         console.log("材料ID:"+selectMaterialId);
         if(selectMaterial!=undefined && selectMaterial!=null && selectMaterial!='' && selectMaterialId!=-1){
+            $("select[name='lotNumberList']").empty();
             $.ajax({
                 type: "get",
                 url: "/materialIn/getLnList",
@@ -138,7 +144,7 @@
                             $("select[name='lotNumberList']").append(str);
                         }
                     }
-                    layui.form.render("select");
+                    form.render("select");
                 },
                 error:function(e){
                     console.log(e);
@@ -147,17 +153,21 @@
         }else{
             alertMsg("请先选择材料!");
         }
+        });
     };
 
     //添加多一个批号选择
     var addLotNumber = function () {
-       var html =  $(".lot-num-select:last").clone();
-       //获取已选择批号,下一个下拉框不选择
-        var selectdLn = $(".lot-num-select:last lotNumberList option:selected").val();
-        alert(selectdLn);
-        $(".lot-num-select:last").after(html);
-        //删除已选择的批号
-        $(".lot-num-select:last lotNumberList option[value='"+selectdLn+"']").remove();
+        alert(1);
+        $("#addLotNumber").click(function(){
+            var html =  $(".lot-num-select:last").clone();
+            //获取已选择批号,下一个下拉框不选择
+            var selectdLn = $(".lot-num-select:last lotNumberList option:selected").val();
+            alert(selectdLn);
+            $(".lot-num-select:last").after(html);
+            //删除已选择的批号
+            $(".lot-num-select:last lotNumberList option[value='"+selectdLn+"']").remove();
+        })
     }
 
     //计算实际出仓量( 还待编写)
@@ -178,6 +188,8 @@
     $(function () {
         //渲染材料框
         getNameList();
+        //监听加号
+        addLotNumber();
     });
 
     var alertMsg = function(msg){
