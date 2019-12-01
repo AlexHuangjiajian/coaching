@@ -22,69 +22,59 @@
     <div class="layui-form-item">
         <label class="layui-form-label">材料选择:</label>
         <div class="layui-input-block">
-            <select name="mNameList" lay-verify="required"  lay-filter="mNameList" lay-search >
+            <select name="mId" lay-verify="required"  lay-filter="mId" lay-search >
                 <option value="-1"></option>
             </select>
         </div>
     </div>
 
     <div class="layui-form-item lot-num-select">
-    <label class="layui-form-label">批号:</label>
-        <!--<input type="text" name="title" placeholder="请输入批号" autocomplete="off" class="layui-input">-->
-        <div class="layui-input-block">
-        <select name="lotNumberList" lay-verify="required" lay-search>
-            <option value="-1"></option>
-        </select>
-            <div>
-                <span id="addLotNumber"><i class="layui-icon layui-icon-add-1" style="font-size: 30px;"></i></span>
+        <div class="layui-row">
+        <div class="layui-input-inline">
+            <label class="layui-form-label">批号:</label>
+            <!--<input type="text" name="title" placeholder="请输入批号" autocomplete="off" class="layui-input">-->
+            <div class="layui-input-block">
+                <select name="lotNumberList" class="lotNum" lay-verify="required" lay-search>
+                    <option value="-1"></option>
+                </select>
+
+            </div>
+        </div>
+
+        <div class="layui-input-inline" style="margin-left: 135px">
+            <label class="layui-form-label">出仓数量:</label>
+            <div class="layui-input-block">
+                <input type="text" name="num" lay-verify="number|required"
+                       placeholder="请输入数量"  class="layui-input num" value="0" style="width:120px">
+            </div>
+        </div>
+
+        <div class="layui-input-inline" style="width: 90px">
+            <label class="layui-form-label"  id="specifications">规格:kg</label>
+        </div>
+
+            <div class="layui-input-inline">
+                <label class="layui-form-label addLotNumber" style="text-align: left"><i class="layui-icon layui-icon-add-1" style="font-size: 30px;"></i></label>
             </div>
         </div>
 </div>
 
-    <div class="layui-form-item">
+ <!--   <div class="layui-form-item">
+
         <label class="layui-form-label">出仓数量:</label>
         <div class="layui-input-block">
             <input type="text" name="num" required  lay-verify="required" placeholder="请输入数量"  class="layui-input">
-            <label class="layui-form-label">规格:</label>
-            <input type="text" name="specifications" value="kg"  class="layui-input" disabled="disabled">
+
         </div>
-    </div>
+    </div>-->
 
     <div class="layui-form-item">
         <label class="layui-form-label">实际出仓量:</label>
         <div class="layui-input-block">
-            <input type="text" name="outNum"  id="outNum" class="layui-input" disabled="disabled">
+            <input type="text" name="outNum"  id="outNum" class="layui-input" value="0" readonly="readonly">
         </div>
     </div>
 
-
-    <div class="layui-form-item">
-        <label class="layui-form-label">复选框</label>
-        <div class="layui-input-block">
-            <input type="checkbox" name="like[write]" title="写作">
-            <input type="checkbox" name="like[read]" title="阅读" checked>
-            <input type="checkbox" name="like[dai]" title="发呆">
-        </div>
-    </div>
-    <div class="layui-form-item">
-        <label class="layui-form-label">开关</label>
-        <div class="layui-input-block">
-            <input type="checkbox" name="switch" lay-skin="switch">
-        </div>
-    </div>
-    <div class="layui-form-item">
-        <label class="layui-form-label">单选框</label>
-        <div class="layui-input-block">
-            <input type="radio" name="sex" value="男" title="男">
-            <input type="radio" name="sex" value="女" title="女" checked>
-        </div>
-    </div>
-    <div class="layui-form-item layui-form-text">
-        <label class="layui-form-label">文本域</label>
-        <div class="layui-input-block">
-            <textarea name="desc" placeholder="请输入内容" class="layui-textarea"></textarea>
-        </div>
-    </div>
     <div class="layui-form-item">
         <div class="layui-input-block">
             <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
@@ -107,9 +97,9 @@
                  if(data.code==0){
                      for(var i=0;i<data.list.length;i++){
                          var str =  '<option value="'+data.list[i].id+'">'+data.list[i].name+'</option>';
-                         $("select[name='mNameList']").append(str);
+                         $("select[name='mId']").append(str);
                      }
-                     $("select[name='mNameList'] layui-select-title").val("");
+                     $("select[name='mId'] layui-select-title").val("");
                  }
                 form.render("select");
             },
@@ -124,7 +114,7 @@
     var getLotNumberList = function(selectMaterialId){
         layui.use('form',function(){
             var form  = layui.form;
-        var selectMaterial = $("select[name='mNameList'] option:selected").text();
+        var selectMaterial = $("select[name='mId'] option:selected").text();
         console.log("材料名："+selectMaterial);
         console.log("材料ID:"+selectMaterialId);
         if(selectMaterial!=undefined && selectMaterial!=null && selectMaterial!='' && selectMaterialId!=-1){
@@ -141,7 +131,7 @@
                             var str =  '<option value="'+i+'"> 批号:'+data.list[i].lotNumber+'  库存:'+data.list[i].stock+'/'
                                 +data.list[i].specifications+'</option>';
                             console.log(str);
-                            $("select[name='lotNumberList']").append(str);
+                            $("select[name='lotNumberList']:last").append(str);
                         }
                     }
                     form.render("select");
@@ -158,38 +148,56 @@
 
     //添加多一个批号选择
     var addLotNumber = function () {
-        alert(1);
-        $("#addLotNumber").click(function(){
-            var html =  $(".lot-num-select:last").clone();
-            //获取已选择批号,下一个下拉框不选择
-            var selectdLn = $(".lot-num-select:last lotNumberList option:selected").val();
-            alert(selectdLn);
-            $(".lot-num-select:last").after(html);
-            //删除已选择的批号
-            $(".lot-num-select:last lotNumberList option[value='"+selectdLn+"']").remove();
+        $(document).on('click','.addLotNumber',function(){
+            layui.use(['form','layer'],function(){
+                var form  = layui.form;
+                var selectdLn = $(".lot-num-select:last option:selected").val();
+                if(selectdLn!=undefined && selectdLn!=null && selectdLn!='' && selectdLn!=-1){
+                    var html =  $(".lot-num-select:last").clone();
+                    //获取已选择批号,下一个下拉框不选择
+                    $(".lot-num-select:last").after(html);
+                    //删除已选择的批号
+                    $("select[name='lotNumberList']:last option[value='"+selectdLn+"']").remove();
+                    caluOutNum();
+                    form.render();
+                }else{
+                    layer.msg("请先选择批号！")
+                }
+            })
         })
-    }
+    };
 
     //计算实际出仓量( 还待编写)
-    /*var caluOutNum = function(){
-        $("#num").onchange(function () {
-            //获取输入数量
-            var num = $("#num").val();
-            //获取选择批号材料库存
-            var stock = $("#").val();
-            if(num>stock){
-               layui.msg("库存不足");
-            }else{
-            }
-        })
-        $("#outNum").val();
-    }*/
+    var caluOutNum = function(){
+        var total = 0*1;
+        $(".num").each(function () {
+            total = total+($(this).val()*1);
+        });
+        //获取规格
+        var specifications = $("#specifications").text();
+        //赋值实际数量
+        $("#outNum").val(total+"  "+specifications);
+    }
+
+
+    var numEvent = function(){
+        layui.use('form',function(){
+            var form  = layui.form;
+            $(document).on("change",'.num',function(){
+            caluOutNum();
+        });
+        form.render();
+    })
+
+    };
 
     $(function () {
         //渲染材料框
         getNameList();
         //监听加号
         addLotNumber();
+        //计算实际值
+        numEvent();
     });
 
     var alertMsg = function(msg){
@@ -202,7 +210,7 @@
     layui.use('form', function(){
         var form = layui.form;
 
-        form.on('select(mNameList)', function(data){
+        form.on('select(mId)', function(data){
             console.log(data.elem); //得到select原始DOM对象
             console.log(data.value); //得到被选中的值
             console.log(data.othis); //得到美化后的DOM对象
@@ -212,8 +220,32 @@
 
         //监听提交
         form.on('submit(formDemo)', function(data){
-            layer.msg(JSON.stringify(data.field));
-            return false;
+            //选择的批号
+            var lotnumList = [];
+            //批号对应出货量
+            var outnumList = [];
+            $(".lotNum option:selected").each(function(){
+                lotnumList.push($(this).val());
+            });
+            $(".num").each(function () {
+                outnumList.push($(this).val());
+            });
+            alert(lotnumList);
+            data.field.push({"lotNumberList":lotNumberList});
+            data.field.push({"outnumList":outnumList});
+            var specifications = $("#specifications").text().replace("规格：","");
+            data.field.push({"specifications":specifications});
+            console.log(JSON.stringify(data.field));
+            $.ajax({
+                type: "get",
+                url: "/materialOut/add",
+                data:data.field,
+                contentType: 'application/x-www-form-urlencoded;charset=utf-8',
+                success: function(data){
+                    var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                    parent.layer.close(index); //再执行关闭
+                }
+            });
         });
     });
 </script>
