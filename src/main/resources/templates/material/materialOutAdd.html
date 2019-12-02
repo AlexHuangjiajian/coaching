@@ -128,7 +128,7 @@
                 success: function(data){
                     if(data.code==0){
                         for(var i=0;i<data.list.length;i++){
-                            var str =  '<option value="'+i+'"> 批号:'+data.list[i].lotNumber+'  库存:'+data.list[i].stock+'/'
+                            var str =  '<option value="'+data.list[i].lotNumber+'"> 批号:'+data.list[i].lotNumber+'  库存:'+data.list[i].stock+'/'
                                 +data.list[i].specifications+'</option>';
                             console.log(str);
                             $("select[name='lotNumberList']:last").append(str);
@@ -220,32 +220,48 @@
 
         //监听提交
         form.on('submit(formDemo)', function(data){
+            //选择的材料
+            var name = $("select[name='mId'] option:selected").text();
             //选择的批号
             var lotnumList = [];
             //批号对应出货量
             var outnumList = [];
+            var totalNum = 0;
             $(".lotNum option:selected").each(function(){
                 lotnumList.push($(this).val());
             });
             $(".num").each(function () {
                 outnumList.push($(this).val());
+                totalNum = totalNum*1+($(this).val()*1);
             });
-            alert(lotnumList);
-            data.field.push({"lotNumberList":lotNumberList});
-            data.field.push({"outnumList":outnumList});
-            var specifications = $("#specifications").text().replace("规格：","");
-            data.field.push({"specifications":specifications});
+            delete data.field['num'];
+
+            data.field['name']=name;
+            data.field['lotNumberList']=lotnumList;
+            data.field['outnumList']=outnumList;
+            data.field['outNum'] = totalNum;
+            var specifications = $("#specifications").text().replace("规格:","");
+            data.field['specifications']=specifications;
+
             console.log(JSON.stringify(data.field));
-            $.ajax({
-                type: "get",
-                url: "/materialOut/add",
-                data:data.field,
-                contentType: 'application/x-www-form-urlencoded;charset=utf-8',
-                success: function(data){
-                    var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
-                    parent.layer.close(index); //再执行关闭
-                }
-            });
+            if(lotnumList.length==0 || outnumList.length==0){
+                layer.msg("请先选择批号！")
+                return false;
+            }else{
+                $.ajax({
+                    type: "post",
+                    url: "/materialOut/add",
+                    data:{'record':JSON.stringify(data.field)},
+                    success: function(data){
+                        var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                        parent.layer.close(index); //再执行关闭
+                    },
+                    error:function () {
+                        layer.msg("新增失败,请联系管理员!")
+                    }
+
+                });
+            }
         });
     });
 </script>

@@ -5,6 +5,7 @@ import com.alex.coaching.model.MaterialOut;
 import com.alex.coaching.service.MaterialOutService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -20,11 +21,13 @@ public class MaterialOutServiceImpl implements MaterialOutService {
     private MaterialOutMapper materialOutMapper;
 
     @Override
+    @Transactional  //开启事务
     public int deleteByPrimaryKey(Integer id) {
         return materialOutMapper.deleteByPrimaryKey(id);
     }
 
     @Override
+    @Transactional  //开启事务
     public int insert(MaterialOut record) {
         return materialOutMapper.insert(record);
     }
@@ -40,11 +43,13 @@ public class MaterialOutServiceImpl implements MaterialOutService {
     }
 
     @Override
+    @Transactional  //开启事务
     public int updateByPrimaryKeySelective(MaterialOut record) {
         return materialOutMapper.updateByPrimaryKeySelective(record);
     }
 
     @Override
+    @Transactional  //开启事务
     public int updateByPrimaryKey(MaterialOut record) {
         return materialOutMapper.updateByPrimaryKey(record);
     }
