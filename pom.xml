@@ -72,6 +72,24 @@
             <artifactId>spring-boot-devtools</artifactId>
             <optional>true</optional>
         </dependency>
+
+        <!-- poi 相关 -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>4.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>4.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml-schemas</artifactId>
+            <version>4.0.1</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -90,7 +108,8 @@
                 <artifactId>mybatis-generator-maven-plugin</artifactId>
                 <version>1.3.2</version>
                 <configuration>
-                    <!--配置文件的位置-->      <configurationFile>src/main/resources/generatorConfig.xml</configurationFile>
+                    <!--配置文件的位置-->
+                    <configurationFile>src/main/resources/generatorConfig.xml</configurationFile>
                     <verbose>true</verbose>
                     <overwrite>true</overwrite>
                 </configuration>
@@ -122,9 +141,6 @@
             </resource>
         </resources>
     </build>
-
-
-
 
 
 </project>

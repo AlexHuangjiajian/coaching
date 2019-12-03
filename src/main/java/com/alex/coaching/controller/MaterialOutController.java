@@ -2,6 +2,7 @@ package com.alex.coaching.controller;
 
 import com.alex.coaching.model.MaterialOut;
 import com.alex.coaching.service.MaterialOutService;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 
@@ -33,6 +36,11 @@ public class MaterialOutController {
     @RequestMapping("/turnList")
     public String turnList(){
         return "/material/materialOutList";
+    }
+
+    @RequestMapping("/turnEdit")
+    public String turnEdit(){
+        return "/material/materialOutUpdate";
     }
 
     @ResponseBody
@@ -59,8 +67,6 @@ public class MaterialOutController {
             jsonObject.put("msg","参数为空！");
             return jsonObject;
         }
-
-
         JSONObject recordJson = JSONObject.parseObject(record);
         JSONArray lotNumArr = recordJson.getJSONArray("lotNumberList");
         JSONArray outNumArr = recordJson.getJSONArray("outnumList");
@@ -85,4 +91,38 @@ public class MaterialOutController {
     }
 
 
+    //删除
+    @ResponseBody
+    @RequestMapping("/delete")
+    public JSONObject deleteOut(int id){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("code",-1);
+        jsonObject.put("msg","删除失败");
+        if(id<=0){
+            return jsonObject;
+        }
+        int result = materialOutService.deleteByPrimaryKey(id);
+        if(result>0){
+            jsonObject.put("code",0);
+            jsonObject.put("msg","删除成功");
+        }
+        return jsonObject;
+    }
+
+    //获取单条信息
+    @ResponseBody
+    @RequestMapping("/getInfo")
+    public JSONObject getInfo(Integer id){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("code",-1);
+        jsonObject.put("msg","获取失败");
+        if(id<=0){
+            return jsonObject;
+        }
+        MaterialOut out = materialOutService.selectByPrimaryKey(id);
+        jsonObject.put("materialOut", JSONObject.toJSON(out));
+        jsonObject.put("msg","获取成功");
+        jsonObject.put("code",1);
+        return jsonObject;
+    }
 }
