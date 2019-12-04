@@ -108,7 +108,7 @@
                         }
                        // $("select[name='mId'] layui-select-title").val("");
                         //设置选中
-                      $("select[name='mId']").val(mId);
+                      //$("select[name='mId']").val(mId);
                     }
                     form.render("select");
                 },
@@ -164,6 +164,10 @@
         $.get('/materialOut/getInfo',{'id':outId},function(data){
             console.log(data.materialOut);
             form.val('example',data.materialOut);
+            $("select[name='mId']").siblings("div.layui-form-select").find('dl').find("dd[lay-value='"+data.materialid+"']").click();
+            $("select[name='lotNumberList']").siblings("div.layui-form-select").find('dl').find("dd[lay-value='"+data.lotNumber+"']").click();
+            alert(1);
+            form.render();
         });
 
         form.on('select(mId)', function(data){
