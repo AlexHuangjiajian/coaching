@@ -19,6 +19,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -135,6 +139,7 @@ public class MaterialOutController {
     public JSONObject printWord(String data, HttpServletRequest request, HttpServletResponse response)throws Exception{
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("code",-1);
+        jsonObject.put("msg","导出失败");
         if(data.equals("")||data==null){
             jsonObject.put("msg","未选择出仓纪录");
             return jsonObject;
@@ -143,9 +148,13 @@ public class MaterialOutController {
         List<Map<String, Object>> list = new ArrayList<>();
         for (int i=0;i<jsonArray.size();i++){
             MaterialOut out = jsonArray.get(i);
-
             //TODO: 此处map数据需要做处理,去除不需要的字段，加上表格需要的字段
-            list.add(MapObjUtil.object2Map(out));
+            Map<String,Object>  map = MapObjUtil.object2Map(out);
+            //添加其他表格字段 ，请领数量等等
+            map.put("department","生产部");
+            map.put("pNum",out.getNum());
+            map.put("fNum",out.getNum());
+            list.add(map);
         }
 
         Map<String,Object> textMap=new HashMap<>();
@@ -181,4 +190,51 @@ public class MaterialOutController {
 
         return jsonObject;
     }
+
+    public static String getEncoding(String str) {
+        String encode = "GB2312";
+        try {
+            if (str.equals(new String(str.getBytes(encode), encode))) { //判断是不是GB2312
+                String s = encode;
+                return s; //是的话，返回“GB2312“，以下代码同理
+            }
+        } catch (Exception exception) {
+        }
+        encode = "ISO-8859-1";
+        try {
+            if (str.equals(new String(str.getBytes(encode), encode))) { //判断是不是ISO-8859-1
+                String s1 = encode;
+                return s1;
+            }
+        } catch (Exception exception1) {
+        }
+        encode = "UTF-8";
+        try {
+            if (str.equals(new String(str.getBytes(encode), encode))) { //判断是不是UTF-8
+                String s2 = encode;
+                return s2;
+            }
+        } catch (Exception exception2) {
+        }
+        encode = "GBK";
+        try {
+            if (str.equals(new String(str.getBytes(encode), encode))) { //判断是不是GBK
+                String s3 = encode;
+                return s3;
+            }
+        } catch (Exception exception3) {
+        }
+        return "";
+    }
+
+        public static void main(String[] args) {
+            try {
+                URI uri = Constants.class.getResource("/").toURI();
+                System.out.println(uri.getPath());
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
+            }
+
+        }
+
 }
