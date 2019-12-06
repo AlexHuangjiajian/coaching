@@ -2,10 +2,7 @@ package com.alex.coaching.common;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.*;
 import java.net.URLEncoder;
 
 /**
@@ -14,52 +11,63 @@ import java.net.URLEncoder;
  * @Date: Create in 17:24 2019/12/4
  */
 public class FileUtil {
+// 注：
+
+// 获取项目下文件或者文件流
+
+// File file = new File(this.getClass().getResource("/xls/adminImportUserTemplate.xls").toURI());
+
+// in = new BufferedInputStream(this.getClass().getResourceAsStream("/xls/adminImportUserTemplate.xls"));
+
 
     /**
-     *
-     * @param aFileName  导出名称
-     * @param aFilePath  源路径
+     * 下载文件到浏览器
      * @param request
      * @param response
+     * @param filename 要下载的文件名
+     * @param file     需要下载的文件对象
+     * @throws IOException
      */
-    public static void doExport(String aFileName, String aFilePath, HttpServletRequest request, HttpServletResponse response){
-        BufferedInputStream bis = null;
-        BufferedOutputStream bos = null;
-        File file = null;
-        file = new File(aFilePath);
-        try{
-            request.setCharacterEncoding("UTF-8");
-            String agent = request.getHeader("User-Agent").toUpperCase();
-            if ((agent.indexOf("MSIE") > 0) || ((agent.indexOf("RV") != -1) && (agent.indexOf("FIREFOX") == -1)))
-                aFileName = URLEncoder.encode(aFileName, "UTF-8");
-            else {
-                aFileName = new String(aFileName.getBytes("UTF-8"), "ISO8859-1");
-            }
-            response.setContentType("application/x-msdownload;");
-            response.setHeader("Content-disposition", "attachment; filename=" + aFileName);
-            response.setHeader("Content-Length", String.valueOf(file.length()));
-            bis = new BufferedInputStream(new FileInputStream(file));
-            bos = new BufferedOutputStream(response.getOutputStream());
-            byte[] buff = new byte[2048];
-            int bytesRead;
-            while (-1 != (bytesRead = bis.read(buff, 0, buff.length)))
-                bos.write(buff, 0, bytesRead);
-            System.out.println("success");
-            bos.flush();
-        }catch (Exception e) {
-            // TODO: handle exception
-            System.out.println("导出文件失败！");
-        } finally {
+    public static void downFile(HttpServletRequest request, HttpServletResponse response, String filename, File file) throws IOException {
+        //  文件存在才下载
+        if (file.exists()) {
+            OutputStream out = null;
+            FileInputStream in = null;
             try {
-                if (bis != null) {
-                    bis.close();
+                // 1.读取要下载的内容
+                in = new FileInputStream(file);
+
+                // 2. 告诉浏览器下载的方式以及一些设置
+                // 解决文件名乱码问题，获取浏览器类型，转换对应文件名编码格式，IE要求文件名必须是utf-8, firefo要求是iso-8859-1编码
+                String agent = request.getHeader("user-agent");
+                if (agent.contains("FireFox")) {
+                    filename = new String(filename.getBytes("UTF-8"), "iso-8859-1");
+                } else {
+                    filename = URLEncoder.encode(filename, "UTF-8");
                 }
-                if (bos != null) {
-                    bos.close();
+                // 设置下载文件的mineType，告诉浏览器下载文件类型
+                String mineType = request.getServletContext().getMimeType(filename);
+                response.setContentType(mineType);
+                // 设置一个响应头，无论是否被浏览器解析，都下载
+                response.setHeader("Content-Disposition", "attachment; filename=" + filename);
+                response.addHeader("Content-Length", "" + file.length());
+                response.setContentType("application/octet-stream;charset=UTF-8");
+                // 将要下载的文件内容通过输出流写到浏览器
+                out = response.getOutputStream();
+                int len = 0;
+                byte[] buffer = new byte[1024];
+                while ((len = in.read(buffer)) > 0) {
+                    out.write(buffer, 0, len);
                 }
-                file.delete();
-            } catch (Exception e) {
-//               LOGGER.error("导出文件关闭流出错！", e);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (out != null) {
+                    out.close();
+                }
+                if (in != null) {
+                    in.close();
+                }
             }
         }
     }

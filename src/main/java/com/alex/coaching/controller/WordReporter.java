@@ -6,6 +6,7 @@ package com.alex.coaching.controller;
  * @Date: Create in 15:59 2019/12/4
  */
 
+import com.alex.coaching.common.Constants;
 import org.apache.poi.util.Units;
 import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
 import org.apache.poi.xwpf.usermodel.*;
@@ -413,6 +414,14 @@ public class WordReporter {
      * @throws IOException
      */
     public boolean generate(String outDocPath) throws IOException {
+        File file = new File(Constants.EXCEL_TEMP);
+        if(!file.exists()){
+            file.mkdirs();
+        }
+        File docFile = new File(outDocPath);
+        if(docFile.exists()){
+            docFile.delete();
+        }
         outputStream = new FileOutputStream(outDocPath);
         xwpfDocument.write(outputStream);
         this.close(outputStream);

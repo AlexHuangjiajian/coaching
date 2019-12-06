@@ -57,7 +57,7 @@
                 <button class="layui-btn layui-btn-normal" id="add" lay-filter="add">新增出仓</button>
             </div>
             <div class="layui-col-md3" style="margin-left:20px">
-                <button class="layui-btn layui-btn-normal" id="input" lay-filter="input">导入表格</button>
+                <button class="layui-btn layui-btn-normal" id="a" lay-filter="input">导入表格</button>
             </div>
             <div class="layui-col-md3" style="margin-left:20px">
                 <button class="layui-btn layui-btn-normal" id="output" lay-filter="output" data-type="outputExcel">导出模板</button>
@@ -201,11 +201,15 @@
             if(data.length==0){
                 alertMsg("请先选择数据")
             }else{
+                console.log(JSON.stringify(data))
                 $.ajax({
                     url:'/materialOut/printWord',
+                    contentType:"application/json;charset=utf-8",
                     data:{'data':JSON.stringify(data)},
                     success:function(data){
-                        alertMsg(data.msg)
+                        alertMsg(data.msg);
+                        console.log("地址:"+data.fileUrl);
+                        window.location.href = decodeURI(data.fileUrl);
                     },error:function () {
                     }
                 })
@@ -223,10 +227,8 @@
     });
 
 
-    //导出表格
-    $(function () {
 
-    })
+
 
 </script>
 

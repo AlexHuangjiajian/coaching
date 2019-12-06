@@ -1,5 +1,7 @@
 server:
   port: 8001
+  tomcat:
+    uri-encoding: UTF-8
 mybatis:
   type-aliases-package: com.alex.coaching.model        # 所有Entity别名类所在包
   configuration:

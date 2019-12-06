@@ -1,11 +1,9 @@
 package com.alex.coaching.controller;
 
 import com.alex.coaching.common.Constants;
-import com.alex.coaching.common.FileUtil;
 import com.alex.coaching.common.MapObjUtil;
 import com.alex.coaching.model.MaterialOut;
 import com.alex.coaching.service.MaterialOutService;
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,13 +13,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -135,8 +126,9 @@ public class MaterialOutController {
         return jsonObject;
     }
 
+    @ResponseBody
     @RequestMapping("/printWord")
-    public JSONObject printWord(String data, HttpServletRequest request, HttpServletResponse response)throws Exception{
+    public JSONObject printWord(String data)throws Exception{
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("code",-1);
         jsonObject.put("msg","导出失败");
@@ -168,7 +160,7 @@ public class MaterialOutController {
         String filePath = Constants.OUTEXCEL_PATH;
         System.out.println(filePath);
         //输出文件位置
-        String longTime = new SimpleDateFormat("yyyy-MM-dd/HH:MM:SS").format(new Date());
+        String longTime = new SimpleDateFormat("yyyy-MM-dd-HH").format(new Date());
         String excelName = "outExcel"+longTime+".docx";
         String outPath = Constants.EXCEL_TEMP+excelName;
         //渲染数据
@@ -177,64 +169,20 @@ public class MaterialOutController {
         wordReporter.init();            //初始化工具类
         wordReporter.export(list,null,null,0,textMap);   //写入相关数据
         wordReporter.generate(outPath);   //导出到目标文档
-
+        System.out.println(outPath);
         //浏览器下载
-        File file = new File(outPath);
-        InputStream inputStream = new FileInputStream(file);
-        FileUtil.doExport(excelName,outPath,request,response);
-
-        //最后删除文件
-        file.delete();
+       // File file = new File(outPath);
+        //FileUtil.downFile(request,response,excelName,file);
         jsonObject.put("code",0);
-        jsonObject.put("msg","导出成功");
-
+       // jsonObject.put("fileUrl","/static/Exceltemp/"+excelName);
+        jsonObject.put("fileUrl", URLEncoder.encode(outPath.substring(1)));
+        System.out.println("编码后:"+URLEncoder.encode(outPath.substring(1)));
+        jsonObject.put("msg","已渲染数据");
+        //最后删除文件
+        // file.delete();
         return jsonObject;
     }
 
-    public static String getEncoding(String str) {
-        String encode = "GB2312";
-        try {
-            if (str.equals(new String(str.getBytes(encode), encode))) { //判断是不是GB2312
-                String s = encode;
-                return s; //是的话，返回“GB2312“，以下代码同理
-            }
-        } catch (Exception exception) {
-        }
-        encode = "ISO-8859-1";
-        try {
-            if (str.equals(new String(str.getBytes(encode), encode))) { //判断是不是ISO-8859-1
-                String s1 = encode;
-                return s1;
-            }
-        } catch (Exception exception1) {
-        }
-        encode = "UTF-8";
-        try {
-            if (str.equals(new String(str.getBytes(encode), encode))) { //判断是不是UTF-8
-                String s2 = encode;
-                return s2;
-            }
-        } catch (Exception exception2) {
-        }
-        encode = "GBK";
-        try {
-            if (str.equals(new String(str.getBytes(encode), encode))) { //判断是不是GBK
-                String s3 = encode;
-                return s3;
-            }
-        } catch (Exception exception3) {
-        }
-        return "";
-    }
 
-        public static void main(String[] args) {
-            try {
-                URI uri = Constants.class.getResource("/").toURI();
-                System.out.println(uri.getPath());
-            } catch (URISyntaxException e) {
-                e.printStackTrace();
-            }
-
-        }
 
 }
