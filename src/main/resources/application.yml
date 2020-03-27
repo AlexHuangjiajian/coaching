@@ -7,6 +7,9 @@ mybatis:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 debug: true
+
+#配置虚拟路径
+ExcelTemp-location: C:/Users/huangjiajian/Desktop/coaching-master/coaching/target/classes/static/ExcelTemp/
 spring:
   devtools:
     restart:
@@ -16,10 +19,11 @@ spring:
   freemarker:
     cache: false
   mvc:
-    static-path-pattern: /static/**
-
+    #静态资源匹配路径规则
+    static-path-pattern: /**
   resources:
-    static-locations: classpath:/static/
+    #具体上哪找这些静态资源
+    static-locations: classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/,file:${ExcelTemp-location}
 
   thymeleaf:
     cache: false

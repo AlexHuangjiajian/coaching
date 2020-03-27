@@ -160,7 +160,7 @@ public class MaterialOutController {
         String filePath = Constants.OUTEXCEL_PATH;
         System.out.println(filePath);
         //输出文件位置
-        String longTime = new SimpleDateFormat("yyyy-MM-dd-HH").format(new Date());
+        String longTime = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());
         String excelName = "outExcel"+longTime+".docx";
         String outPath = Constants.EXCEL_TEMP+excelName;
         //渲染数据
@@ -175,7 +175,7 @@ public class MaterialOutController {
         //FileUtil.downFile(request,response,excelName,file);
         jsonObject.put("code",0);
        // jsonObject.put("fileUrl","/static/Exceltemp/"+excelName);
-        jsonObject.put("fileUrl", URLEncoder.encode(outPath.substring(1)));
+        jsonObject.put("fileUrl",excelName);
         System.out.println("编码后:"+URLEncoder.encode(outPath.substring(1)));
         jsonObject.put("msg","已渲染数据");
         //最后删除文件
