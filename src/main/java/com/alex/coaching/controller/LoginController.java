@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,21 +23,20 @@ public class LoginController {
     UserService userService;
 
     @RequestMapping("/login")
-    public String login(HttpServletRequest request, Model model){
+    public String login(HttpServletRequest request, ModelAndView view){
         JSONObject returnObj = new JSONObject();
-        List<User> userList = new ArrayList<User>();
         String userName = request.getParameter("userName");
         String password = request.getParameter("password");
         User user = userService.selectByUserName(userName);
         if(user!=null){
-            userList.add(user);
             if(password.equals(user.getPassword())){
                 request.getSession().setAttribute("user",user);
                 returnObj.put("code",100);
-                returnObj.put("data",userList.toArray());
+                returnObj.put("data",user);
                 //return returnObj;
             }
         }
+        view.addObject(returnObj);
         return "/menu";
     }
 
