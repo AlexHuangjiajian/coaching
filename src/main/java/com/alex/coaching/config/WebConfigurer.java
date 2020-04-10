@@ -34,6 +34,7 @@ public class WebConfigurer implements WebMvcConfigurer {
                         "/login",
                         "/register",
                         "/index.html",
+                        "/layui/**",
                         "/layuiadmin/**",
                         "/**.ico"
                         );

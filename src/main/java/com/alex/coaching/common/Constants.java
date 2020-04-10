@@ -11,6 +11,8 @@ public class Constants {
 
     //公司名称
     public static final String COMPANY_NAME = "广州辰星教育有限公司";
+    //生产部
+    public static final String PRODUCT_DEPARTMENT = "生产部    ";
     //渲染表格后临时存放位置
     public static String EXCEL_TEMP = null;
     //出仓单模板路径

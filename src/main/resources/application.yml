@@ -13,7 +13,7 @@ ExcelTemp-location: C:/Users/huangjiajian/Desktop/coaching-master/coaching/targe
 spring:
   devtools:
     restart:
-      enabled: true  #设置开启热部署
+      enabled: true  #设置开启热部署 热部署更新文件会导致服务器重启，session丢失user的情况。
       additional-paths: src/main/java
       exclude: WEB-INF/**
   freemarker:

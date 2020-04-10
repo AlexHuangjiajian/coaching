@@ -2,7 +2,11 @@ package com.alex.coaching.service;
 
 import com.alex.coaching.model.Material;
 import com.alex.coaching.model.MaterialOut;
+import com.alibaba.fastjson.JSONObject;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 
 public interface MaterialOutService {
@@ -58,5 +62,7 @@ public interface MaterialOutService {
 
     List<MaterialOut> getAllMaterialOut(MaterialOut materialOut,String outDateMin,String outDateMax,
                                         int page, int limit);
+
+    JSONObject printWord(HttpServletRequest request, HttpServletResponse response, String data) throws Exception;
 
 }

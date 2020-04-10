@@ -199,6 +199,11 @@
             });
         });
 
+        $(function () {
+            var user = '';
+            console.log("username:::" + user.username);
+        });
+
         //导出表格
         $("#output").on('click',function () {
             var checkStatus =  table.checkStatus('test')
@@ -214,7 +219,7 @@
                     data:{'data':JSON.stringify(data)},
                     success:function(data){
                         alertMsg(data.msg);
-                        console.log("地址:"+data.fileUrl);
+                        console.log("地址:"+"http://" + location.host +"/"+data.fileUrl);
                         window.location.href ="http://" + location.host +"/"+data.fileUrl;
                     },error:function () {
                     }

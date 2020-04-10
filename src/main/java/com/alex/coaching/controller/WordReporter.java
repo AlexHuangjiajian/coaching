@@ -16,6 +16,8 @@ import java.io.*;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class WordReporter {
@@ -56,44 +58,18 @@ public class WordReporter {
         }
     }
 
-    //添加水印  本示例没有用到水印  如果想添加水印  可以在导出方法里调用此方法
-    public void createWaterMark(XWPFDocument doc) {
-        XWPFHeaderFooterPolicy policy = doc.getHeaderFooterPolicy();
-        policy.createWatermark("中国华西监理信息管理平台");
-
-    }
-
-    /**
-     * 导出方法
-     *
-     * @param params       表格里的数据列表
-     * @param orgFullName  需要替换的页眉的公司的名称
-     * @param logoFilePath 需要替换的页眉的Logo的图片的地址
-     * @param tableIndex   需替换的第几个表格的下标
-     * @param textMap      需替换的文本的数据入参
-     * @return
-     * @throws Exception
-     */
-    public boolean export(List<Map<String, Object>> params, String orgFullName, String logoFilePath, int tableIndex, Map<String, Object> textMap) throws Exception {
-        //createWaterMark(xwpfDocument);
-        //createHeader(xwpfDocument, orgFullName, logoFilePath);
-        replaceText(xwpfDocument, textMap);
-        this.insertValueToTable(xwpfDocument, params, tableIndex);
-        return true;
-    }
-
-   /* *//**
+    /* *//**
      * 对页眉处理  页眉包含公司名称   二维码图片
      *
      * @param doc
-     * @param orgFullName  公司全称
-     * @param logoFilePath 二维码图片的地址
+    //     * @param orgFullName  公司全称
+    //     * @param logoFilePath 二维码图片的地址
      * @throws Exception
      *//*
     public void createHeader(XWPFDocument doc, String orgFullName, String logoFilePath) throws Exception {
         *//*
-         * 对页眉段落作处理，使二维码图片在页眉右边，公司全称在页眉左边
-         * *//*
+     * 对页眉段落作处理，使二维码图片在页眉右边，公司全称在页眉左边
+     * *//*
         CTSectPr sectPr = doc.getDocument().getBody().addNewSectPr();
         XWPFHeaderFooterPolicy headerFooterPolicy = new XWPFHeaderFooterPolicy(doc, sectPr);
         XWPFHeader header = headerFooterPolicy.createHeader(XWPFHeaderFooterPolicy.DEFAULT);
@@ -108,9 +84,9 @@ public class WordReporter {
 
 
         *//*
-         * 添加字体页眉，公司全称
-         * 公司全称在右边
-         * *//*
+     * 添加字体页眉，公司全称
+     * 公司全称在右边
+     * *//*
         if (orgFullName != null) {
             run = paragraph.createRun();
             run.setText(orgFullName);
@@ -127,8 +103,8 @@ public class WordReporter {
         tabStop.setPos(BigInteger.valueOf(6 * twipsPerInch));
 
         *//*
-         * 取到二维码的图片的字节流
-         * *//*
+     * 取到二维码的图片的字节流
+     * *//*
         if (logoFilePath != null) {
 
 
@@ -148,6 +124,29 @@ public class WordReporter {
 
     }*/
 
+    //添加水印  本示例没有用到水印  如果想添加水印  可以在导出方法里调用此方法
+    public void createWaterMark(XWPFDocument doc) {
+        XWPFHeaderFooterPolicy policy = doc.getHeaderFooterPolicy();
+        policy.createWatermark("中国华西监理信息管理平台");
+
+    }
+
+    /**
+     * 导出方法
+     *
+     * @param params       表格里的数据列表
+     * @param tableIndex   需替换的第几个表格的下标
+     * @param textMap      需替换的文本的数据入参
+     * @return
+     * @throws Exception
+     */
+    public boolean export(List<Map<String, Object>> params, int tableIndex, Map<String, Object> textMap) throws Exception {
+        replaceText(xwpfDocument, textMap);
+        this.insertValueToTable(xwpfDocument, params, tableIndex);
+        return true;
+    }
+
+
     /**
      * 替换非表格埋点值
      *
@@ -160,20 +159,19 @@ public class WordReporter {
         for (XWPFParagraph para : paras) {
             //当前段落的属性
             System.out.println("打印获取到的段落的每一行数据++++++++>>>>>>>" + para.getText());
-            String str = para.getText();
-            System.out.println("========================>>>>>>" + para.getParagraphText());
-
-            List<XWPFRun> list = para.getRuns();
+           List<XWPFRun> list = para.getRuns();
             for (XWPFRun run : list) {
-                for (String key : keySet) {
-                    if (key.equals(run.text())) {
-                        run.setText(String.valueOf(textMap.get(key)), 0);
+                if(!run.text().trim().equals("")){
+                    //内容非空
+                    for (String key : keySet) {
+                        if (key.equals(run.text().trim())) {
+                            run.setText(String.valueOf(textMap.get(key)), 0);
+                        }
                     }
                 }
             }
         }
     }
-
 
     /**
      * 循环填充表格内容
@@ -407,7 +405,7 @@ public class WordReporter {
     }
 
     /**
-     * 收尾方法
+     * 收尾方法 输出
      *
      * @param outDocPath
      * @return
@@ -507,7 +505,7 @@ public class WordReporter {
         WordReporter wordReporter = new WordReporter();
         wordReporter.setTempLocalPath(filePath);    //设置模板的路径
         wordReporter.init();            //初始化工具类
-        wordReporter.export(list,orgFullName,imgFile,0,textMap);   //写入相关数据
+        wordReporter.export(list,0,textMap);   //写入相关数据
         wordReporter.generate(outPath);   //导出到目标文档
 
     }
