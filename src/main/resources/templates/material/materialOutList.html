@@ -27,7 +27,6 @@
                     <label class="layui-form-label">批号:</label>
                     <div class="layui-input-inline">
                         <input type="text" name="lotNumber"
-                               required
                                placeholder="请输入批号" autocomplete="off" class="layui-input">
                     </div>
                 </div>
@@ -204,7 +203,7 @@
             var checkStatus =  table.checkStatus('test')
                 ,data = checkStatus.data;
             if(data.length==0){
-                alertMsg("请先选择数据")
+                alertMsg("请先选择数据");
             }else{
                 console.log(JSON.stringify(data))
                 $.ajax({
@@ -220,7 +219,7 @@
                     }
                 })
             }
-
+            return false;//阻止button按钮跳转
         });
 
         //消息提醒
