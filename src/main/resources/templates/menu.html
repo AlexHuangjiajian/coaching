@@ -7,6 +7,14 @@
     <link rel="stylesheet" href="/layui/css/layui.css">
     <script type="application/javascript" src="/js/jquery-1.7.2.js"></script>
     <script src="/layui/layui.js"></script>
+    <style>
+        .layui-layout-admin .layui-body{
+            bottom: 0px;
+        }
+        .layui-show{
+            height: 100%;
+        }
+    </style>
 </head>
 <body class="layui-layout-body">
 <div class="layui-layout layui-layout-admin">
@@ -70,14 +78,14 @@
                     <dl class="layui-nav-child">
                         <dd><a href="/hello">原材料</a></dd>
                         <dd><a href="javascript:;">包材采购单</a></dd>
-                        <dd><a href="/material/turnList">原材料购单</a></dd>
+                        <dd><a data-url="/material/turnList" data-id="materialOut" data-title="原材料购单" class="site-demo-active" data-type="tabAdd">原材料购单</a></dd>
                     </dl>
                 </li>
 
                 <li class="layui-nav-item">
                     <a href="javascript:;">生产管理</a>
                     <dl class="layui-nav-child">
-                        <dd><a href="javascript:;" id="hello">列表一</a></dd>
+                        <dd><a href="javascript:;">列表一</a></dd>
                         <dd><a href="javascript:;">列表二</a></dd>
                         <dd><a href="">超链接</a></dd>
                     </dl>
@@ -86,8 +94,8 @@
                 <li class="layui-nav-item">
                     <a href="javascript:;">仓库管理</a>
                     <dl class="layui-nav-child">
-                        <dd><a href="/materialIn/turnList" id="">入仓管理</a></dd>
-                        <dd><a href="/materialOut/turnList">出仓管理</a></dd>
+                        <dd><a data-url="/materialIn/turnList" data-id="materialIn" data-title="入仓管理" class="site-demo-active"  data-type="tabAdd" >入仓管理</a></dd>
+                        <dd><a data-url="/materialOut/turnList" data-id="materialOut" data-title="出仓管理" class="site-demo-active" data-type="tabAdd" >出仓管理</a></dd>
                         <dd><a href="">超链接</a></dd>
                     </dl>
                 </li>
@@ -101,9 +109,19 @@
 
     <div class="layui-body">
         <!-- 内容主体区域 -->
-      <iframe id="iframeMain" src="" style="width: 100%"; height="100%"></iframe>
-
+        <!--<iframe id="iframeMain" src="" style="width: 100%;height: 100%"></iframe>-->
+        <div class="layui-tab layui-tab-card" lay-filter="demo" lay-allowclose="true" style="height: 100%;margin: 0px;overflow: hidden;">
+            <ul class="layui-tab-title">
+                <li class="layui-this" lay-id="carInformation">车辆信息</li>
+            </ul>
+            <div class="layui-tab-content" style="height: calc(100% - 95px);overflow-y: hidden;">
+                <div class="layui-tab-item layui-show">
+                    <iframe src="/materialOut/turnList" scrolling="auto" frameborder="0" style="width: 100%;height: 100%"></iframe>
+                </div>
+            </div>
+        </div>
     </div>
+
     <div class="layui-footer">
         <!-- 底部固定区域 -->
         © layui.com - 底部固定区域
@@ -112,15 +130,76 @@
 </body>
 
 <script>
-    $(function(){
+/*    $(function(){
         $("dd a").click(function (e) {
             e.preventDefault();
             $("#iframeMain").attr("src",$(this).attr("href"));
         });
-    });
+    });*/
+    //JavaScript代码区域
     layui.use('element', function(){
         var element = layui.element;
+        var $ = layui.jquery;
+        //触发事件
+        var active = {
+            //在这里给active绑定几项事件，后面可通过active调用这些事件
+            tabAdd: function(url,id,name) {
+                //新增一个Tab项 传入三个参数，分别对应其标题，tab页面的地址，还有一个规定的id，是标签中data-id的属性值
+                //关于tabAdd的方法所传入的参数可看layui的开发文档中基础方法部分
+                element.tabAdd('demo', {
+                    title: name,
+                    content: '<iframe data-frameid="'+id+'" src="'+url+'"  scrolling="auto" frameborder="0" style="width: 100%;height: 100%"></iframe>',
+                    id: id //规定好的id
+                })
+                element.render('tab');
+
+            },
+            tabChange: function(id) {
+                //切换到指定Tab项
+                element.tabChange('demo', id); //根据传入的id传入到指定的tab项
+            },
+            tabDelete: function (id) {
+                element.tabDelete("demo", id);//删除
+            }
+            , tabDeleteAll: function (ids) {//删除所有
+                $.each(ids, function (i,item) {
+                    element.tabDelete("demo", item); //ids是一个数组，里面存放了多个id，调用tabDelete方法分别删除
+                })
+            }
+        };
+
+
+        //当点击有site-demo-active属性的标签时，即左侧菜单栏中内容 ，触发点击事件
+        $('.site-demo-active').on('click', function(e) {
+            //e.preventDefault();
+            var dataid = $(this);
+
+            //这时会判断右侧.layui-tab-title属性下的有lay-id属性的li的数目，即已经打开的tab项数目
+            if ($(".layui-tab-title li[lay-id]").length <= 0) {
+                //如果比零小，则直接打开新的tab项
+                active.tabAdd(dataid.attr("data-url"), dataid.attr("data-id"),dataid.attr("data-title"));
+            } else {
+                //否则判断该tab项是否以及存在
+
+                var isData = false; //初始化一个标志，为false说明未打开该tab项 为true则说明已有
+                $.each($(".layui-tab-title li[lay-id]"), function () {
+                    //如果点击左侧菜单栏所传入的id 在右侧tab项中的lay-id属性可以找到，则说明该tab项已经打开
+                    if ($(this).attr("lay-id") == dataid.attr("data-id")) {
+                        isData = true;
+                    }
+                })
+                if (isData == false) {
+                    //标志为false 新增一个tab项
+                    active.tabAdd(dataid.attr("data-url"), dataid.attr("data-id"),dataid.attr("data-title"));
+                }
+            }
+            //最后不管是否新增tab，最后都转到要打开的选项页面上
+            active.tabChange(dataid.attr("data-id"));
+        });
+
     });
+
+
  /*   layui.use('carousel',function(){
         layui.carousel.render({
             elem: '#carouse'
